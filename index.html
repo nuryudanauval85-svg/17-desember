@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Letter</title>
+    <style>
+        * {margin:0; padding:0; box-sizing:border-box;}
+        body {
+            min-height: 100vh;
+            background:
+                linear-gradient(180deg, #e6f4ff 0%, #b3d9ff 35%, #80bfff 70%, #4da6ff 100%);
+            display:flex; flex-direction:column; justify-content:center; align-items:center;
+            padding:30px 20px; position:relative; overflow:hidden;
+            font-family:'Georgia', 'Times New Roman', serif;
+        }
+
+        /* TEKSTUR & CAHAYA LATAR */
+        .kertas-tektur {
+            position:absolute; inset:0; opacity:0.05; pointer-events:none; z-index:0;
+            background-image:url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+        .cahaya-lembut {
+            position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+            background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.25), transparent 50%);
+            animation:cahayaGerak 18s ease-in-out infinite alternate;
+            pointer-events:none; z-index:0;
+        }
+        @keyframes cahayaGerak {
+            0% {transform:translate(0,0);}
+            100% {transform:translate(40px, 30px);}
+        }
+
+        /* AWAN REALISTIS */
+        .awan {
+            position:absolute; background:rgba(255,255,255,0.65); border-radius:50%;
+            filter:blur(18px); z-index:1; opacity:0.85;
+        }
+        .awan.slow {animation:awanJalan 35s linear infinite;}
+        .awan.med {animation:awanJalan 28s linear infinite;}
+        .awan.fast {animation:awanJalan 22s linear infinite;}
+        @keyframes awanJalan {
+            0% {transform:translateX(-200px);}
+            100% {transform:translateX(calc(100vw + 200px));}
+        }
+
+        /* PARTIKEL CAHAYA */
+        .partikel {
+            position:absolute; border-radius:50%; z-index:1;
+            background:linear-gradient(135deg, #fff, #cce0ff);
+            box-shadow:0 0 6px rgba(255,255,255,0.6);
+        }
+        .partikel.kecil {width:3px; height:3px; animation:naikKecil 12s linear infinite;}
+        .partikel.sedang {width:5px; height:5px; animation:naikSedang 15s linear infinite;}
+        @keyframes naikKecil {
+            0% {transform:translateY(100vh); opacity:0;}
+            15% {opacity:0.4;}
+            85% {opacity:0.4;}
+            100% {transform:translateY(-100px); opacity:0;}
+        }
+        @keyframes naikSedang {
+            0% {transform:translateY(100vh) scale(0.8); opacity:0;}
+            10% {opacity:0.6;}
+            90% {opacity:0.6;}
+            100% {transform:translateY(-100px) scale(1.2); opacity:0;}
+        }
+
+        /* TULISAN JUDUL */
+        .judul {
+            text-align:center; margin-bottom:40px; z-index:2;
+        }
+        .garis-hias {
+            width:180px; height:1px; margin:15px auto;
+            background:linear-gradient(90deg, transparent, #0066cc, transparent);
+            opacity:0; transform:scaleX(0);
+            animation:garisMuncul 2.5s ease forwards 1s;
+        }
+        .teks-utama {
+            font-size:38px; color:#002b4d; letter-spacing:3px; font-weight:normal;
+            opacity:0; transform:translateY(25px);
+            animation:munculBawah 2s ease forwards 0.3s;
+        }
+        .teks-sub {
+            font-size:26px; color:#0059b3; margin-top:10px; letter-spacing:2px; font-weight:normal;
+            opacity:0; transform:translateY(20px);
+            animation:munculBawah 2s ease forwards 1.8s;
+        }
+        @keyframes munculBawah {
+            to {opacity:1; transform:translateY(0);}
+        }
+        @keyframes garisMuncul {
+            to {opacity:1; transform:scaleX(1);}
+        }
+
+        /* KOTAK AMPLOP 3D */
+        .wadah-amplop {
+            position:relative; cursor:pointer; margin-bottom:40px; z-index:2;
+            opacity:0; transform:translateY(50px);
+            animation:amplopMasuk 2.5s ease forwards 3s;
+        }
+        @keyframes amplopMasuk {
+            to {opacity:1; transform:translateY(0);}
+        }
+        .amplop {
+            width:360px; height:230px; position:relative; perspective:1400px;
+            filter:drop-shadow(0 15px 25px rgba(0,51,102,0.18));
+        }
+
+        /* TUTUP AMPLOP */
+        .tutup-luar {
+            position:absolute; top:0; left:0; width:100%; height:115px;
+            background:linear-gradient(180deg, #99ccff, #73b9ff);
+            clip-path:polygon(0 0, 50% 100%, 100% 0);
+            transform-origin:top; transition:transform 1.6s cubic-bezier(0.3,0,0.2,1); z-index:6;
+            box-shadow:inset 0 8px 20px rgba(0,51,102,0.12);
+            backface-visibility:hidden;
+        }
+        .buka .tutup-luar {transform:rotateX(180deg);}
+
+        /* BADAN AMPLOP */
+        .badan-atas {
+            position:absolute; top:0; left:0; width:100%; height:115px;
+            background:linear-gradient(180deg, #b3d9ff, #99ccff);
+            clip-path:polygon(0 0, 50% 100%, 100% 0); z-index:2;
+        }
+        .badan-bawah {
+            position:absolute; bottom:0; left:0; width:100%; height:175px;
+            background:linear-gradient(180deg, #cce0ff, #99ccff);
+            border-radius:0 0 16px 16px; z-index:1;
+            box-shadow:inset 0 -12px 30px rgba(0,51,102,0.1), 0 20px 40px rgba(0,51,102,0.15);
+        }
+        .sisi-kiri, .sisi-kanan {
+            position:absolute; bottom:0; width:50%; height:175px; z-index:2;
+            background:linear-gradient(90deg, rgba(0,51,102,0.06), transparent);
+        }
+        .sisi-kiri {left:0; clip-path:polygon(0 0, 100% 0, 0 100%);}
+        .sisi-kanan {right:0; clip-path:polygon(0 0, 100% 0, 100% 100%);
+            background:linear-gradient(-90deg, rgba(0,51,102,0.06), transparent);}
+
+        /* SEGEL LILIN */
+        .segel-lilin {
+            position:absolute; top:70px; left:50%; transform:translateX(-50%);
+            width:44px; height:44px; border-radius:50%; z-index:7;
+            background:radial-gradient(circle at 35% 30%, #66b3ff, #0066cc);
+            box-shadow:
+                inset 0 5px 12px rgba(255,255,255,0.35),
+                0 0 18px rgba(0,102,204,0.4),
+                0 4px 10px rgba(0,51,102,0.2);
+            transition:all 1s ease;
+        }
+        .buka .segel-lilin {
+            opacity:0; transform:translateX(-50%) scale(0.4) rotate(60deg);
+        }
+
+        /* KERTAS SURAT */
+        .kertas-surat {
+            position:absolute; bottom:20px; left:25px; right:25px;
+            background:linear-gradient(180deg, #ffffff, #f2f7ff);
+            border-radius:4px; padding:35px 30px; min-height:200px;
+            transform:translateY(30px) scale(0.92); opacity:0;
+            transition:all 1.8s cubic-bezier(0.2,0,0.1,1) 0.6s; z-index:5;
+            box-shadow:
+                0 2px 8px rgba(0,51,102,0.06),
+                0 15px 35px rgba(0,51,102,0.12),
+                inset 0 0 0 1px rgba(0,51,102,0.04);
+            background-image:url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+        .buka .kertas-surat {
+            transform:translateY(-180px) scale(1); opacity:1;
+        }
+        .kertas-surat p {
+            color:#002b4d; font-size:17px; line-height:2; text-align:center;
+            opacity:0; transform:translateY(15px);
+        }
+        .kertas-surat p:nth-child(1) {animation:teksMuncul 1.5s ease forwards 1.2s;}
+        .kertas-surat p:nth-child(2) {animation:teksMuncul 1.5s ease forwards 2.2s;}
+        .kertas-surat p:nth-child(3) {animation:teksMuncul 1.5s ease forwards 3.2s;}
+        @keyframes teksMuncul {
+            to {opacity:1; transform:translateY(0);}
+        }
+
+        /* TOMBOL */
+        .tombol-buka {
+            background:linear-gradient(135deg, #0073e6, #0059b3);
+            color:#fff; border:none; padding:16px 65px; font-size:18px;
+            border-radius:50px; cursor:pointer; letter-spacing:2px; z-index:2;
+            opacity:0; animation:munculBawah 2s ease forwards 4s;
+            transition:all 0.4s ease;
+            box-shadow:0 8px 20px rgba(0,102,204,0.25);
+        }
+        .tombol-buka:hover {
+            transform:translateY(-4px);
+            box-shadow:0 14px 30px rgba(0,102,204,0.35);
+            background:linear-gradient(135deg, #3399ff, #0066cc);
+        }
+
+        /* LAYAR PESAN PENUH */
+        .layar-pesan {
+            position:fixed; inset:0;
+            background:linear-gradient(180deg, rgba(0,51,102,0.6), rgba(0,77,153,0.5));
+            display:flex; justify-content:center; align-items:center; z-index:100;
+            opacity:0; visibility:hidden; transition:all 1.2s ease;
+            backdrop-filter:blur(6px);
+        }
+        .layar-pesan.tampil {opacity:1; visibility:visible;}
+        .wadah-pesan {
+            background:linear-gradient(180deg, #fff, #f5f9ff);
+            padding:50px 40px; border-radius:20px; max-width:440px; width:90%;
+            text-align:center; transform:scale(0.8) translateY(20px);
+            transition:transform 1.2s cubic-bezier(0.3,0,0.2,1);
+            box-shadow:0 25px 60px rgba(0,51,102,0.25);
+            background-image:url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+        .layar-pesan.tampil .wadah-pesan {transform:scale(1) translateY(0);}
+        .judul-pesan {
+            font-size:30px; color:#00478f; margin-bottom:30px; letter-spacing:2px;
+            opacity:0; transform:translateY(15px);
+            animation:munculBawah 1.5s ease forwards 0.5s;
+        }
+        .pesan-baris {
+            color:#002b4d; font-size:17px; line-height:2; margin-bottom:12px;
+            opacity:0; transform:translateY(12px);
+        }
+        .pesan-baris:nth-child(2) {animation:munculBawah 1.5s ease forwards 1.2s;}
+        .pesan-baris:nth-child(3) {animation:munculBawah 1.5s ease forwards 2.0s;}
+        .pesan-baris:nth-child(4) {animation:munculBawah 1.5s ease forwards 2.8s;}
+        .pesan-baris:nth-child(5) {animation:munculBawah 1.5s ease forwards 3.6s;}
+        .pesan-baris:nth-child(6) {animation:munculBawah 1.5s ease forwards 4.4s;}
+        .pesan-baris:nth-child(7) {animation:munculBawah 1.5s ease forwards 5.2s;}
+        .pesan-baris:nth-child(8) {animation:munculBawah 1.5s ease forwards 6.0s;}
+        .pesan-baris:nth-child(9) {animation:munculBawah 1.5s ease forwards 6.8s;}
+
+        /* KERTAS TERBANG */
+        .kertas-terbang {
+            position:absolute; width:24px; height:32px; background:#fff;
+            border-radius:2px; box-shadow:0 3px 10px rgba(0,51,102,0.12);
+            z-index:101; pointer-events:none;
+        }
+        @keyframes terbangPutar {
+            0% {transform:translateY(100vh) rotate(0deg); opacity:0;}
+            15% {opacity:1;}
+            85% {opacity:1;}
+            100% {transform:translateY(-120px) rotate(720deg); opacity:0;}
+        }
+    </style>
+</head>
+<body>
+    <div class="kertas-tektur"></div>
+    <div class="cahaya-lembut"></div>
+
+    <script>
+        // Awan
+        const dataAwan = [
+            {w:140,h:50,t:12,d:0,c:'slow'},
+            {w:180,h:60,t:22,d:7,c:'med'},
+            {w:110,h:42,t:18,d:14,c:'fast'},
+            {w:160,h:55,t:28,d:21,c:'slow'},
+            {w:95,h:38,t:35,d:28,c:'med'}
+        ];
+        dataAwan.forEach(a=>{
+            const el=document.createElement('div');
+            el.className='awan '+a.c;
+            el.style.width=a.w+'px'; el.style.height=a.h+'px';
+            el.style.top=a.t+'%'; el.style.animationDelay=a.d+'s';
+            document.body.appendChild(el);
+        });
+
+        // Partikel
+        for(let i=0;i<35;i++){
+            const p=document.createElement('div');
+            p.className='partikel '+(Math.random()>0.5?'sedang':'kecil');
+            p.style.left=Math.random()*100+'%';
+            p.style.animationDelay=Math.random()*15+'s';
+            document.body.appendChild(p);
+        }
+    </script>
+
+    <div class="judul">
+        <p class="teks-utama">HAPPY BIRTHDAY</p>
+        <div class="garis-hias"></div>
+        <p class="teks-sub">To Someone Special</p>
+    </div>
+
+    <div class="wadah-amplop" id="wadahAmplop">
+        <div class="amplop">
+            <div class="tutup-luar"></div>
+            <div class="badan-atas"></div>
+            <div class="badan-bawah"></div>
+            <div class="sisi-kiri"></div>
+            <div class="sisi-kanan"></div>
+            <div class="segel-lilin"></div>
+            <div class="kertas-surat">
+                <p>Selamat hari kelahiran.</p>
+                <p>Semoga setiap langkahmu diliputi kebahagiaan, kesehatan, dan kesuksesan.</p>
+                <p>Terima kasih telah menjadi bagian indah dalam hidupku.</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="tombol-buka" id="tombolBuka">Open</button>
+
+    <div class="layar-pesan" id="layarPesan">
+        <div class="wadah-pesan">
+            <h2 class="judul-pesan">Happy Birthday</h2>
+            <p class="pesan-baris">Untuk kamu yang selalu ada di hati</p>
+            <p class="pesan-baris">Semoga tahun ini membawa banyak hal indah</p>
+            <p class="pesan-baris">Semua impian perlahan menjadi kenyataan</p>
+            <p class="pesan-baris">Sehat dan bahagia selalu untukmu</p>
+            <p class="pesan-baris">Terima kasih atas segala kehadiranmu</p>
+            <p class="pesan-baris">Kita melangkah bersama ke masa depan</p>
+            <p class="pesan-baris">Setiap detik berharga bersamamu</p>
+            <p class="pesan-baris">Selamanya milikku</p>
+        </div>
+    </div>
+
+    <script>
+        const wadahAmplop = document.getElementById('wadahAmplop');
+        const tombolBuka = document.getElementById('tombolBuka');
+        const layarPesan = document.getElementById('layarPesan');
+
+        function buatKertasTerbang(jumlah, jeda) {
+            for(let i=0;i<jumlah;i++){
+                setTimeout(()=>{
+                    const k=document.createElement('div');
+                    k.className='kertas-terbang';
+                    k.style.left=(Math.random()*80+10)+'%';
+                    k.style.animation='terbangPutar '+(5+Math.random()*3)+'s ease-in-out forwards';
+                    k.style.animationDelay=Math.random()*0.5+'s';
+                    document.body.appendChild(k);
+                    setTimeout(()=>k.remove(),8000);
+                },i*jeda);
+            }
+        }
+
+        wadahAmplop.addEventListener('click', ()=>{
+            wadahAmplop.classList.add('buka');
+            buatKertasTerbang(10, 250);
+        });
+
+        tombolBuka.addEventListener('click', ()=>{
+            wadahAmplop.classList.add('buka');
+            setTimeout(()=>layarPesan.classList.add('tampil'), 2500);
+            buatKertasTerbang(18, 200);
+        });
+
+        layarPesan.addEventListener('click', (e)=>{
+            if(e.target===layarPesan) layarPesan.classList.remove('tampil');
+        });
+    </script>
+</body>
+</html>
